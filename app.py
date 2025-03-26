@@ -2,11 +2,14 @@ import streamlit as st
 import pickle
 import numpy as np
 import pandas as pd
+import os
 from sklearn.preprocessing import StandardScaler
 
 # Load trained model
-with open("linear_regression_model.pkl", "rb") as model_file:
-    model = pickle.load(model_file)
+
+model_path = os.path.join(os.getcwd(), "linear_regression_model.pkl")
+with open(model_path, "rb") as model_file:
+
 
 # Load scaler if used during training
 with open("scaler.pkl", "rb") as scaler_file:
