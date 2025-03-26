@@ -5,22 +5,20 @@ import os
 from sklearn.preprocessing import StandardScaler
 
 # Load trained model
-model_path = os.path.join(os.getcwd(), "linear_regression_model.pkl")
+model_path = "linear_regression_model.pkl"
+scaler_path = "scaler.pkl"
 
-if os.path.exists(model_path):
+try:
     with open(model_path, "rb") as model_file:
         model = pickle.load(model_file)
-else:
-    st.error("❌ Model file not found. Please upload `linear_regression_model.pkl`.")
-
-# Load scaler if used during training
-scaler_path = os.path.join(os.getcwd(), "scaler.pkl")
-
-if os.path.exists(scaler_path):
     with open(scaler_path, "rb") as scaler_file:
         scaler = pickle.load(scaler_file)
-else:
-    st.error("❌ Scaler file not found. Please upload `scaler.pkl`.")
+except FileNotFoundError:
+    st.error("Model file not found. Please check the file path.")
+    st.stop()
+except pickle.UnpicklingError:
+    st.error("Error loading model. The file may be corrupted.")
+    st.stop()
 
 st.title("IBD Classification and Prediction")
 
@@ -33,23 +31,16 @@ for feature in feature_names:
     input_data.append(value)
 
 # Convert to numpy array and reshape
-input_data = np.array(input_data).reshape(1, -1)  # Ensure correct shape
+input_data = np.array(input_data).reshape(1, -1)
 
-# Display feature info
-if 'model' in locals():
-    st.write(f"✅ Expected number of features: {model.n_features_in_}")
-    st.write(f"✅ Shape of input_data: {input_data.shape}")
+# Ensure feature compatibility
+if input_data.shape[1] != model.n_features_in_:
+    st.error(f"Feature mismatch. Expected {model.n_features_in_} features but got {input_data.shape[1]}.")
+    st.stop()
 
 # Scale input data
-if 'scaler' in locals():
-    input_array_scaled = scaler.transform(input_data)
-else:
-    input_array_scaled = input_data  # Use raw data if scaler is missing
+input_array_scaled = scaler.transform(input_data)
 
-# Prediction
 if st.button("Predict IBD Type"):
-    if 'model' in locals():
-        prediction = model.predict(input_array_scaled)[0]
-        st.success(f"🎯 Predicted IBD Type: {prediction}")
-    else:
-        st.error("❌ Model not loaded. Unable to make predictions.")
+    prediction = model.predict(input_array_scaled)[0]
+    st.success(f"Predicted IBD Type: {prediction}")
