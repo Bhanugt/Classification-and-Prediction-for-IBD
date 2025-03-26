@@ -8,7 +8,7 @@ from sklearn.preprocessing import StandardScaler
 # Load trained model
 
 model_path = os.path.join(os.getcwd(), "linear_regression_model.pkl")
-with open(model_path, "rb") as model_file:
+ with open(model_path, "rb") as model_file:
 
 
 # Load scaler if used during training
