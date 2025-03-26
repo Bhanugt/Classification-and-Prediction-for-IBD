@@ -5,7 +5,7 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
 # Load trained model
-with open("logistic_regression_model.pkl", "rb") as model_file:
+with open("logistic_model", "rb") as model_file:
     model = pickle.load(model_file)
 
 # Load scaler if used during training
